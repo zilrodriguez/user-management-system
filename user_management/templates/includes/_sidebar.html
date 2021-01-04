@@ -1,0 +1,32 @@
+<nav id="sidebar">
+    <div class="sidebar-header">
+        <h3>User Management System</h3>
+    </div>
+    
+    <ul class="list-unstyled components">
+        {% if current_user.user_role == 'Administrator' %}
+            <li>
+                <a href="{{ url_for('admin_dashboard')}}">Dashboard</a>
+            </li>
+        {% elif current_user.user_role == 'User' %}
+            <li>
+                <a href="{{ url_for('user_dashboard') }}">Dashboard</a>
+            </li>
+        {% endif %}
+    </ul>
+    
+    <ul class="list-unstyled user-options">
+        {% if current_user.user_role == 'Administrator' %}
+            <li>
+                <a href="{{ url_for('create_user') }}" class="create-user">Create User</a>
+            </li>
+            <li>
+                <a href="#" class="user-profile">Profile</a>
+            </li>
+        {% elif current_user.user_role == 'User' %}
+            <li>
+                <a href="#" class="user-profile">Profile</a>
+            </li>
+        {% endif %}
+    </ul>
+</nav>

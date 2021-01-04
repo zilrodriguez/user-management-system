@@ -1,0 +1,176 @@
+{% extends 'layouts/layout.html' %}
+
+{% block content %}
+<div class="wrapper">
+    <!-- Sidebar  -->
+    {% include 'includes/_sidebar.html' %}
+    <!-- Page Content  -->
+    <div id="content">
+        <!-- Navbar -->
+        {% include 'includes/_navbar.html' %}
+        
+        <div id="createUserHeader" class="mb-1">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="jumbotron p-3">
+                        <h5>
+                            Create User
+                            <a type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#createUserModal">Create</a>
+                        </h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <section id="userListSection">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            <table id="userTable" class="table table-striped table-bordered table-responsive-sm">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Date Created</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in users %}
+                    <tr>
+                        <th>{{ row.id }}</th>
+                        <td>{{ row.email }}</td>
+                        <td>{{ row.user_role }}</td>
+                        <td>{{ row.date_created.strftime("%m/%d/%Y, %-I:%M %p") }}</td>
+                        <td>
+                            <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteUserModal{{ row.id }}">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    
+                    <!-- Delete Modal -->
+                    <div class="modal fade" id="deleteUserModal{{ row.id }}" tabindex="-1" role="dialog" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="deleteUserModalLabel">Confirm Delete</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Do you want to delete?</p>
+                                </div>
+                                
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <form action="{{ url_for('delete_user', id=row.id) }}" method="POST">
+                                        <input type="submit" class="btn btn-danger" value="Delete">
+                                    </form>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+        
+        <!-- Create User Modal -->
+        <div class="modal fade" id="createUserModal" tabindex="-1" role="dialog" aria-labelledby="createUserModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="createUserModalLabel">Create User</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{{ url_for('create_user') }}" method="POST">
+                            {{ form.hidden_tag() }}
+                            <div class="form-group">
+                                {{ form.email.label(class="form-control-label") }}
+                                
+                                {% if form.email.errors %}
+                                    {{ form.email(class="form-control is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.email.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor%}
+                                    </div>
+                                {% else %}
+                                    {{ form.email(class="form-control") }}
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                {{ form.password.label(class="form-control-label") }}
+                                
+                                {% if form.password.errors %}
+                                    {{ form.password(class="form-control is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.password.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor%}
+                                    </div>
+                                {% else %}
+                                    {{ form.password(class="form-control") }}
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                {{ form.confirmPassword.label(class="form-control-label") }}
+                                
+                                {% if form.confirmPassword.errors %}
+                                    {{ form.confirmPassword(class="form-control is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.confirmPassword.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor%}
+                                    </div>
+                                {% else %}
+                                    {{ form.confirmPassword(class="form-control") }}
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                {{ form.userRole.label(class="form-control-label") }}
+                                
+                                {% if form.userRole.errors %}
+                                    {{ form.userRole(class="custom-select is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.userRole.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor%}
+                                    </div>
+                                {% else %}
+                                    {{ form.userRole(class="custom-select") }}
+                                {% endif %}
+                            </div>
+                            {{ form.submit(class="btn btn-primary mt-2") }}
+                        </form>
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+{% endblock %}

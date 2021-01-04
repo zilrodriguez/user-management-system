@@ -1,0 +1,18 @@
+{% extends 'layouts/layout.html' %}
+
+{% block content %}
+    <div class="wrapper">
+        <!-- Sidebar  -->
+        {% include 'includes/_sidebar.html' %}
+        <!-- Page Content  -->
+        <div id="content">
+            <!-- Navbar -->
+            {% include 'includes/_navbar.html' %}
+            
+            <h2>Dashboard</h2>
+            <div class="line"></div>
+            
+            <p>Welcome, admin {{ current_user.email }}!</p>
+        </div>
+    </div>
+{% endblock %}
